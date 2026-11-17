@@ -28,6 +28,15 @@ final class SqlitePDOContainer implements PDOContainerInterface
             created_at INTEGER NOT NULL,
             PRIMARY KEY (realm, account_id)
         );
+        CREATE TABLE mfa_recovery_code (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            realm TEXT NOT NULL,
+            account_id TEXT NOT NULL,
+            code_hash TEXT NOT NULL,
+            used_at INTEGER NULL,
+            created_at INTEGER NOT NULL
+        );
+        CREATE INDEX realm_account ON mfa_recovery_code (realm, account_id);
         SQL;
 
     private ?PDO $pdo = null;

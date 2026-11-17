@@ -12,3 +12,14 @@ CREATE TABLE mfa_totp_credential (
     created_at INT UNSIGNED NOT NULL,
     PRIMARY KEY (realm, account_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE mfa_recovery_code (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    realm VARCHAR(32) NOT NULL,
+    account_id VARCHAR(64) NOT NULL,
+    code_hash VARCHAR(255) NOT NULL,
+    used_at INT UNSIGNED NULL,
+    created_at INT UNSIGNED NOT NULL,
+    PRIMARY KEY (id),
+    KEY realm_account (realm, account_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
