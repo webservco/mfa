@@ -29,7 +29,8 @@
     "license" : "MIT",
     "name" : "webservco/mfa",
     "require": {
-        "php" : "^8.4"
+        "php" : "^8.4",
+        "bacon/bacon-qr-code" : "^3"
     },
     "require-dev": {
         "pds/skeleton": "^1",
