@@ -18,12 +18,6 @@ use WebServCo\Mfa\Model\DataTransfer\TotpCredential;
 use function preg_match;
 use function str_replace;
 
-/**
- * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
- * attribute and its target, both are on same line": a #[SensitiveParameter] parameter needs a multi-line signature.
- *
- * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
- */
 final readonly class TotpCredentialService implements TotpCredentialServiceInterface
 {
     public function __construct(

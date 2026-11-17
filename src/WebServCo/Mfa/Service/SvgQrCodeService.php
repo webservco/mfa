@@ -12,22 +12,14 @@ use Override;
 use SensitiveParameter;
 use WebServCo\Mfa\Contract\QrCodeServiceInterface;
 
-/**
- * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
- * attribute and its target, both are on same line": a #[SensitiveParameter] parameter needs a multi-line signature.
- *
- * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
- */
 final class SvgQrCodeService implements QrCodeServiceInterface
 {
     // Pixels. The SVG scales, so this is only the default display size.
     private const int SIZE = 256;
 
     #[Override]
-    public function createSvg(
-        #[SensitiveParameter]
-        string $content,
-    ): string {
+    public function createSvg(#[SensitiveParameter] string $content,): string
+    {
         $writer = new Writer(new ImageRenderer(new RendererStyle(self::SIZE), new SvgImageBackEnd()));
 
         return $writer->writeString($content);

@@ -26,12 +26,6 @@ use function str_split;
 use const PHP_QUERY_RFC3986;
 use const STR_PAD_LEFT;
 
-/**
- * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
- * attribute and its target, both are on same line": a #[SensitiveParameter] parameter needs a multi-line signature.
- *
- * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
- */
 final class TotpService implements TotpServiceInterface
 {
     private const string BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -49,11 +43,8 @@ final class TotpService implements TotpServiceInterface
      * HOTP (RFC 4226 section 5.3) with the time step as the counter.
      */
     #[Override]
-    public function getCode(
-        #[SensitiveParameter]
-        string $secret,
-        int $timeStep,
-    ): string {
+    public function getCode(#[SensitiveParameter] string $secret, int $timeStep,): string
+    {
         // Counter: 8 bytes, big endian.
         $hash = hash_hmac('sha1', pack('J', $timeStep), $secret, true);
         // Dynamic truncation: the low 4 bits of the last byte give the offset of 4 bytes, read as a 31-bit integer.
@@ -67,10 +58,8 @@ final class TotpService implements TotpServiceInterface
     }
 
     #[Override]
-    public function getManualKey(
-        #[SensitiveParameter]
-        string $secret,
-    ): string {
+    public function getManualKey(#[SensitiveParameter] string $secret,): string
+    {
         return implode(' ', str_split($this->encodeBase32($secret), 4));
     }
 
@@ -97,12 +86,8 @@ final class TotpService implements TotpServiceInterface
      * Google Authenticator Key URI format: the issuer is both the label prefix and a parameter.
      */
     #[Override]
-    public function getProvisioningUri(
-        #[SensitiveParameter]
-        string $secret,
-        string $issuer,
-        string $label,
-    ): string {
+    public function getProvisioningUri(#[SensitiveParameter] string $secret, string $issuer, string $label,): string
+    {
         foreach ([$issuer, $label] as $part) {
             if ($part === '' || str_contains($part, ':')) {
                 throw new InvalidArgumentException('Issuer and label must not be empty or contain a colon.');
@@ -134,10 +119,8 @@ final class TotpService implements TotpServiceInterface
      * A lookup table is fine here: the secret is shown to the user in the same response, so a constant-time encoding
      * would protect nothing. The component never decodes base32: the stored secret is the raw bytes.
      */
-    private function encodeBase32(
-        #[SensitiveParameter]
-        string $bytes,
-    ): string {
+    private function encodeBase32(#[SensitiveParameter] string $bytes,): string
+    {
         $encoded = '';
         $buffer = 0;
         $bitCount = 0;

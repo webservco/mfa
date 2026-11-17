@@ -22,12 +22,6 @@ use function substr;
 
 use const PASSWORD_BCRYPT;
 
-/**
- * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
- * attribute and its target, both are on same line": a #[SensitiveParameter] parameter needs a multi-line signature.
- *
- * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
- */
 final readonly class RecoveryCodeService implements RecoveryCodeServiceInterface
 {
     // Crockford base32: digits and letters without I, L, O and U.
@@ -60,10 +54,8 @@ final readonly class RecoveryCodeService implements RecoveryCodeServiceInterface
     }
 
     #[Override]
-    public function hashCode(
-        #[SensitiveParameter]
-        string $code,
-    ): string {
+    public function hashCode(#[SensitiveParameter] string $code,): string
+    {
         $normalizedCode = $this->normalizeCode($code);
 
         if ($normalizedCode === null) {
@@ -74,10 +66,8 @@ final readonly class RecoveryCodeService implements RecoveryCodeServiceInterface
     }
 
     #[Override]
-    public function normalizeCode(
-        #[SensitiveParameter]
-        string $code,
-    ): ?string {
+    public function normalizeCode(#[SensitiveParameter] string $code,): ?string
+    {
         $normalizedCode = strtr(strtoupper(str_replace([' ', '-'], '', $code)), 'OIL', '011');
 
         if (preg_match('/^[0-9A-HJKMNP-TV-Z]{10}$/', $normalizedCode) !== 1) {
@@ -88,11 +78,8 @@ final readonly class RecoveryCodeService implements RecoveryCodeServiceInterface
     }
 
     #[Override]
-    public function verifyCode(
-        #[SensitiveParameter]
-        string $code,
-        string $hash,
-    ): bool {
+    public function verifyCode(#[SensitiveParameter] string $code, string $hash,): bool
+    {
         $normalizedCode = $this->normalizeCode($code);
 
         if ($normalizedCode === null) {

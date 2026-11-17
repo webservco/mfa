@@ -24,11 +24,6 @@ use function strlen;
 /**
  * Each code is accepted once. TOTP and recovery codes share one failure count: from the 5th consecutive failure
  * each failure locks for 15 minutes, and from the 20th the lock stays until disable(). A success resets the count.
- *
- * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
- * attribute and its target, both are on same line": a #[SensitiveParameter] parameter needs a multi-line signature.
- *
- * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
  */
 final readonly class MfaService implements MfaServiceInterface
 {
@@ -46,11 +41,8 @@ final readonly class MfaService implements MfaServiceInterface
     }
 
     #[Override]
-    public function confirmEnrollment(
-        string $accountId,
-        #[SensitiveParameter]
-        string $code,
-    ): ?array {
+    public function confirmEnrollment(string $accountId, #[SensitiveParameter] string $code,): ?array
+    {
         $credential = $this->fetchCredential($accountId);
 
         if ($credential === null || $credential->confirmedAt !== null) {
@@ -116,11 +108,8 @@ final readonly class MfaService implements MfaServiceInterface
     }
 
     #[Override]
-    public function verify(
-        string $accountId,
-        #[SensitiveParameter]
-        string $code,
-    ): VerificationResult {
+    public function verify(string $accountId, #[SensitiveParameter] string $code,): VerificationResult
+    {
         $credential = $this->fetchConfirmedCredential($accountId);
 
         if ($credential === null) {
@@ -218,12 +207,8 @@ final readonly class MfaService implements MfaServiceInterface
         return $codes;
     }
 
-    private function useRecoveryCode(
-        string $accountId,
-        #[SensitiveParameter]
-        string $code,
-        int $now,
-    ): bool {
+    private function useRecoveryCode(string $accountId, #[SensitiveParameter] string $code, int $now,): bool
+    {
         if ($this->recoveryCodeService->normalizeCode($code) === null) {
             return false;
         }

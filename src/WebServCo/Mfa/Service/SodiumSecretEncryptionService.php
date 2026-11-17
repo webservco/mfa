@@ -25,11 +25,6 @@ use const SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES;
 /**
  * XChaCha20-Poly1305 (libsodium). Stored format: version byte, random nonce, ciphertext with tag, all in base64.
  * The version byte is also part of the associated data, so it can't be changed without failing the decryption.
- *
- * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
- * attribute and its target, both are on same line": a #[SensitiveParameter] parameter needs a multi-line signature.
- *
- * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
  */
 final readonly class SodiumSecretEncryptionService implements SecretEncryptionServiceInterface
 {
@@ -37,10 +32,8 @@ final readonly class SodiumSecretEncryptionService implements SecretEncryptionSe
     private const int NONCE_LENGTH = SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_NPUBBYTES;
     private const int MINIMUM_LENGTH = 1 + self::NONCE_LENGTH + SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_ABYTES;
 
-    public function __construct(
-        #[SensitiveParameter]
-        private string $key,
-    ) {
+    public function __construct(#[SensitiveParameter] private string $key,)
+    {
         if (strlen($key) !== SODIUM_CRYPTO_AEAD_XCHACHA20POLY1305_IETF_KEYBYTES) {
             throw new InvalidArgumentException('The encryption key must be 32 bytes long.');
         }
@@ -70,11 +63,8 @@ final readonly class SodiumSecretEncryptionService implements SecretEncryptionSe
     }
 
     #[Override]
-    public function encrypt(
-        #[SensitiveParameter]
-        string $plaintext,
-        string $associatedData,
-    ): string {
+    public function encrypt(#[SensitiveParameter] string $plaintext, string $associatedData,): string
+    {
         $nonce = random_bytes(self::NONCE_LENGTH);
 
         return base64_encode(

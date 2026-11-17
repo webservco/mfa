@@ -52,7 +52,7 @@
         "slevomat/coding-standard": "^8",
         "squizlabs/php_codesniffer" : "^4",
         "vimeo/psalm": "^6",
-        "webservco/coding-standards": "^2",
+        "webservco/coding-standards": "^2.4",
         "webservco/component-common": "^2"
     },
     "scripts": {
