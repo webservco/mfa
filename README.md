@@ -1,29 +1,11 @@
-<!--
-This README is the template for every webservco component. Fill it in when you create a component from the skeleton.
-
-The clone workflow already replaces the skeleton name with the real one. Replace the _italic_ placeholders by hand, drop any (optional) section that doesn't apply, then delete this comment.
-
-Everything lives in this file, no docs folder. Around 100 lines is plenty, and when the reader needs more, link to the source file.
-
-The reader is wiring the component into an app by hand, the way the webservco/sandbox project does it. Use real class names for the component and put the interface in a comment above each object. Give app-specific classes generic names (`ExampleCommand`, not the sandbox's `ImportCommand`). When you mention the sandbox, write "the `webservco/sandbox` project". The only link to it is in the description.
-
-Keep the first description line (the general sentence and the sandbox link) as it is. On its own line below it, write one sentence about what the component does. For `description` in composer.json, use "A PHP component/library." followed by that sentence.
-
-Leave the version out of the install command. Composer picks the current major, while a hardcoded constraint goes stale (http-client still says "^0").
--->
-
 # webservco/mfa
-
-> **Note:** This is a template for creating new components. Delete this note when implementing, and the hidden comment at the start of the file.
 
 A PHP component/library. Please see [webservco/sandbox](https://webservco.github.io/sandbox/) for an example project using these types of components.
 
-_What it does, in one sentence._
+TOTP multi-factor authentication (Google Authenticator compatible): enrollment with a QR code, verification with replay protection and throttling, recovery codes and encrypted secrets.
 
-- Implements: _[PSR-N: Title](https://www.php-fig.org/psr/psr-N/)_ (optional)
-- Provides: _`psr/xxx-implementation`_ (optional)
-- Requires: _PHP extensions, external services, or setup (database table, config file)_ (optional)
-- Related: _`webservco/xxx` (how it relates)_ (optional)
+- Requires: PHP extensions `sodium` and `xmlwriter`; the tables in [`resources/mfa.sql`](resources/mfa.sql); the `MFA_ENCRYPTION_KEY` and `MFA_ISSUER` configuration keys
+- Related: `webservco/auth` (an application asks for the code while its login is pending); `webservco/database` (the PDO container)
 
 ---
 
@@ -37,49 +19,93 @@ composer require webservco/mfa
 
 ## Usage
 
-_Smallest working example for the common case. Usually that means getting an object from a factory and calling one method on it._
+One service per realm, that is per kind of account (`admin`, `customer`…). Account ids are strings of 1 to 64 characters.
 
 ```php
-use WebServCo\Component\Factory\ExampleFactory;
+use WebServCo\Data\Factory\Extraction\DataExtractionContainerFactory;
+use WebServCo\Mfa\Factory\MfaServiceFactory;
+use WebServCo\Mfa\Model\VerificationResult;
 
-// \WebServCo\Component\Contract\ExampleInterface
-$factory = new ExampleFactory();
-$example = $factory->createExample();
-$result = $example->doSomething($input);
+// \WebServCo\Mfa\Contract\MfaServiceFactoryInterface
+$mfaServiceFactory = new MfaServiceFactory(
+    $configurationGetter, // \WebServCo\Configuration\Contract\ConfigurationGetterInterface
+    (new DataExtractionContainerFactory())->createDataExtractionContainer(false),
+    $pdoContainer, // \WebServCo\Database\Contract\PDOContainerInterface
+);
+// \WebServCo\Mfa\Contract\MfaServiceInterface
+$mfaService = $mfaServiceFactory->createMfaService('admin');
+
+// Login: the password was right, and MFA is enabled for the account.
+$result = $mfaService->verify($accountId, $submittedCode);
+if ($result === VerificationResult::Accepted || $result === VerificationResult::AcceptedRecoveryCode) {
+    // Complete the login.
+}
+// VerificationResult::Locked: too many failures, even a valid code is refused for now.
 ```
 
-_Another common case? Give it its own `###` heading. Two extra examples at most._
+### Enrollment
+
+```php
+// \WebServCo\Mfa\Model\DataTransfer\Enrollment
+$enrollment = $mfaService->startEnrollment($accountId, $username);
+// Show $enrollment->qrCodeSvg (SVG markup) and $enrollment->manualKey, then ask for the code the app shows.
+
+$recoveryCodes = $mfaService->confirmEnrollment($accountId, $submittedCode);
+if ($recoveryCodes === null) {
+    // Wrong code: ask again. MFA stays off until a code is right.
+}
+// MFA is enabled. Show the 10 recovery codes once; each works one time instead of a code.
+```
+
+### Status, new recovery codes, disable
+
+```php
+// \WebServCo\Mfa\Model\DataTransfer\MfaStatus: isEnabled, isLocked, remainingRecoveryCodes
+$status = $mfaService->getStatus($accountId);
+// Replaces the old codes. Ask for a current code first.
+$recoveryCodes = $mfaService->regenerateRecoveryCodes($accountId);
+// The user turns MFA off, or an administrator resets a lost device.
+$mfaService->disable($accountId);
+```
 
 ---
 
 ## Contracts
 
-_Interfaces an app would type-hint against, and the classes that implement them. Leave out internal ones._
-
 | Interface | Implementation | Purpose |
 | --- | --- | --- |
-| `Contract\ExampleInterface` | `Service\Example` | _What it does._ |
-| `Contract\ExampleFactoryInterface` | `Factory\ExampleFactory` | _Creates `ExampleInterface`._ |
+| `Contract\MfaServiceFactoryInterface` | `Factory\MfaServiceFactory` | Creates `MfaServiceInterface` for a realm. |
+| `Contract\MfaServiceInterface` | `Service\MfaService` | Enrollment, verification, status, recovery codes, disable. |
+| `Contract\Storage\TotpCredentialStorageInterface` | `Service\Storage\PDOTotpCredentialStorage` | Encrypted secrets, used time steps, failures. |
+| `Contract\Storage\RecoveryCodeStorageInterface` | `Service\Storage\PDORecoveryCodeStorage` | Recovery code hashes. |
+| `Psr\Clock\ClockInterface` | `Service\SystemClock` | Current time. |
 
-Namespaces are relative to `WebServCo\Component\`.
+Namespaces are relative to `WebServCo\Mfa\`. For other table names, build the services as [`MfaServiceFactory`](src/WebServCo/Mfa/Factory/MfaServiceFactory.php) does: the storages take the table name as their last argument.
 
 ---
 
-## Configuration (optional)
-
-_Keys read from `config/.env.ini`, each with an example value._
+## Configuration
 
 ```ini
-[Component]
+[MFA]
 
-EXAMPLE_KEY = 'value'
+; Base64 of 32 random bytes; one key per application and environment:
+; php -r 'echo base64_encode(random_bytes(32)), PHP_EOL;'
+MFA_ENCRYPTION_KEY = ''
+; Shown in the authenticator app. No colon.
+MFA_ISSUER = 'Example Admin'
 ```
 
 ---
 
-## Notes (optional)
+## Notes
 
-_Anything that surprised you while using it, such as limitations, gotchas or workarounds._
+- A code, TOTP or recovery, is accepted once. The current and the previous 30-second step are valid.
+- From the 5th consecutive failure each failure locks MFA for 15 minutes; from the 20th it stays locked until `disable()`. A success resets the count.
+- `Enrollment` and the recovery codes contain secrets: show them to the user only, never log or store them.
+- Keep the key out of the database and back it up. Without it every user has to enroll again.
+- Server clocks must be NTP-synchronized. TOTP is not phishing-resistant.
+- Who may call `disable()` is the application's decision.
 
 ---
 

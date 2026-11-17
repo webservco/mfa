@@ -20,7 +20,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "description" : "A PHP component/library.",
+    "description" : "A PHP component/library. TOTP multi-factor authentication (Google Authenticator compatible): enrollment with a QR code, verification with replay protection and throttling, recovery codes and encrypted secrets.",
     "homepage" : "https://webserv.co",
     "keywords" : [
         "component",
