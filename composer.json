@@ -31,6 +31,7 @@
     "require": {
         "php" : "^8.4",
         "bacon/bacon-qr-code" : "^3",
+        "ext-sodium" : "*",
         "ext-xmlwriter" : "*"
     },
     "require-dev": {
