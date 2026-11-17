@@ -1,4 +1,4 @@
-name: component-skeleton
+name: mfa
 type: php
 docroot: public
 #php_version: "8.3"
