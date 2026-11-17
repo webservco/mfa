@@ -34,6 +34,7 @@
         "ext-sodium" : "*",
         "ext-xmlwriter" : "*",
         "psr/clock" : "^1",
+        "webservco/configuration" : "^2",
         "webservco/data" : "^2",
         "webservco/database" : "^2"
     },
