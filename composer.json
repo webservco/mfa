@@ -32,7 +32,9 @@
         "php" : "^8.4",
         "bacon/bacon-qr-code" : "^3",
         "ext-sodium" : "*",
-        "ext-xmlwriter" : "*"
+        "ext-xmlwriter" : "*",
+        "webservco/data" : "^2",
+        "webservco/database" : "^2"
     },
     "require-dev": {
         "pds/skeleton": "^1",
