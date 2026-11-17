@@ -20,7 +20,7 @@ use function strtoupper;
 use function strtr;
 use function substr;
 
-use const PASSWORD_DEFAULT;
+use const PASSWORD_BCRYPT;
 
 /**
  * phpcs: "Signature of method should be placed on a single line" conflicts with "Expected 0 blank lines between
@@ -28,11 +28,18 @@ use const PASSWORD_DEFAULT;
  *
  * @phpcs:disable SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature.RequiredSingleLineSignature
  */
-final class RecoveryCodeService implements RecoveryCodeServiceInterface
+final readonly class RecoveryCodeService implements RecoveryCodeServiceInterface
 {
     // Crockford base32: digits and letters without I, L, O and U.
     private const string ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
     private const int CODE_COUNT = 10;
+
+    /**
+     * @param int $hashCost bcrypt cost; each step doubles the time (about 160 ms per hash at 10 in the DDEV container).
+     */
+    public function __construct(private int $hashCost = 10,)
+    {
+    }
 
     #[Override]
     public function generateCodes(): array
@@ -63,7 +70,7 @@ final class RecoveryCodeService implements RecoveryCodeServiceInterface
             throw new InvalidArgumentException('Not a recovery code.');
         }
 
-        return password_hash($normalizedCode, PASSWORD_DEFAULT);
+        return password_hash($normalizedCode, PASSWORD_BCRYPT, ['cost' => $this->hashCost]);
     }
 
     #[Override]

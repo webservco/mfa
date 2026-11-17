@@ -50,6 +50,12 @@ final class RecoveryCodeServiceTest extends TestCase
         self::assertFalse($service->verifyCode('not a code', $hash));
     }
 
+    public function testTheHashCostCanBeLowered(): void
+    {
+        // bcrypt hashes start with $2y$, then the cost.
+        self::assertStringStartsWith('$2y$04$', (new RecoveryCodeService(4))->hashCode('ABCDE-FGHJK'));
+    }
+
     public function testHashCodeRejectsAnInvalidCode(): void
     {
         $this->expectException(InvalidArgumentException::class);
