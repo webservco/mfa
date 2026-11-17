@@ -33,6 +33,7 @@
         "bacon/bacon-qr-code" : "^3",
         "ext-sodium" : "*",
         "ext-xmlwriter" : "*",
+        "psr/clock" : "^1",
         "webservco/data" : "^2",
         "webservco/database" : "^2"
     },
