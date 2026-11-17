@@ -30,7 +30,8 @@
     "name" : "webservco/mfa",
     "require": {
         "php" : "^8.4",
-        "bacon/bacon-qr-code" : "^3"
+        "bacon/bacon-qr-code" : "^3",
+        "ext-xmlwriter" : "*"
     },
     "require-dev": {
         "pds/skeleton": "^1",
