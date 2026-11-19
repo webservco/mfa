@@ -11,15 +11,14 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Tests\Unit\Assets\MfaFixture;
 use UnexpectedValueException;
+use WebServCo\Encryption\Contract\SecretEncryptionServiceInterface;
 use WebServCo\Mfa\Contract\QrCodeServiceInterface;
-use WebServCo\Mfa\Contract\SecretEncryptionServiceInterface;
 use WebServCo\Mfa\Contract\Storage\TotpCredentialStorageInterface;
 use WebServCo\Mfa\Contract\TotpServiceInterface;
 use WebServCo\Mfa\Model\DataTransfer\Enrollment;
 use WebServCo\Mfa\Model\DataTransfer\TotpCredential;
 use WebServCo\Mfa\Service\MfaService;
 use WebServCo\Mfa\Service\RecoveryCodeService;
-use WebServCo\Mfa\Service\SodiumSecretEncryptionService;
 use WebServCo\Mfa\Service\Storage\PDORecoveryCodeStorage;
 use WebServCo\Mfa\Service\Storage\PDOTotpCredentialStorage;
 use WebServCo\Mfa\Service\SvgQrCodeService;
@@ -35,7 +34,6 @@ use function substr;
 #[UsesClass(PDORecoveryCodeStorage::class)]
 #[UsesClass(PDOTotpCredentialStorage::class)]
 #[UsesClass(RecoveryCodeService::class)]
-#[UsesClass(SodiumSecretEncryptionService::class)]
 #[UsesClass(SvgQrCodeService::class)]
 #[UsesClass(TotpCredential::class)]
 #[UsesClass(TotpService::class)]

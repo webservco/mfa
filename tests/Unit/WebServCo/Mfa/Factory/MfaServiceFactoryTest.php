@@ -19,7 +19,6 @@ use WebServCo\Mfa\Factory\TotpCredentialServiceFactory;
 use WebServCo\Mfa\Model\DataTransfer\Enrollment;
 use WebServCo\Mfa\Service\MfaService;
 use WebServCo\Mfa\Service\RecoveryCodeService;
-use WebServCo\Mfa\Service\SodiumSecretEncryptionService;
 use WebServCo\Mfa\Service\Storage\PDORecoveryCodeStorage;
 use WebServCo\Mfa\Service\Storage\PDOTotpCredentialStorage;
 use WebServCo\Mfa\Service\SvgQrCodeService;
@@ -39,7 +38,6 @@ use function sprintf;
 #[UsesClass(PDORecoveryCodeStorage::class)]
 #[UsesClass(PDOTotpCredentialStorage::class)]
 #[UsesClass(RecoveryCodeService::class)]
-#[UsesClass(SodiumSecretEncryptionService::class)]
 #[UsesClass(SvgQrCodeService::class)]
 #[UsesClass(SystemClock::class)]
 #[UsesClass(TotpCredentialService::class)]

@@ -31,12 +31,12 @@
     "require": {
         "php" : "^8.4",
         "bacon/bacon-qr-code" : "^3",
-        "ext-sodium" : "*",
         "ext-xmlwriter" : "*",
         "psr/clock" : "^1",
         "webservco/configuration" : "^2",
         "webservco/data" : "^2",
-        "webservco/database" : "^2"
+        "webservco/database" : "^2",
+        "webservco/encryption" : "^0"
     },
     "require-dev": {
         "pds/skeleton": "^1",

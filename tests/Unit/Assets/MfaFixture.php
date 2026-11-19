@@ -6,10 +6,10 @@ namespace Tests\Unit\Assets;
 
 use OutOfRangeException;
 use WebServCo\Data\Factory\Extraction\DataExtractionContainerFactory;
+use WebServCo\Encryption\Service\SodiumSecretEncryptionService;
 use WebServCo\Mfa\Model\DataTransfer\TotpCredential;
 use WebServCo\Mfa\Service\MfaService;
 use WebServCo\Mfa\Service\RecoveryCodeService;
-use WebServCo\Mfa\Service\SodiumSecretEncryptionService;
 use WebServCo\Mfa\Service\Storage\PDORecoveryCodeStorage;
 use WebServCo\Mfa\Service\Storage\PDOTotpCredentialStorage;
 use WebServCo\Mfa\Service\SvgQrCodeService;

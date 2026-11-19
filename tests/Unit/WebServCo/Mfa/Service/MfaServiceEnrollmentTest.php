@@ -18,7 +18,6 @@ use WebServCo\Mfa\Model\DataTransfer\TotpCredential;
 use WebServCo\Mfa\Model\VerificationResult;
 use WebServCo\Mfa\Service\MfaService;
 use WebServCo\Mfa\Service\RecoveryCodeService;
-use WebServCo\Mfa\Service\SodiumSecretEncryptionService;
 use WebServCo\Mfa\Service\Storage\PDORecoveryCodeStorage;
 use WebServCo\Mfa\Service\Storage\PDOTotpCredentialStorage;
 use WebServCo\Mfa\Service\SvgQrCodeService;
@@ -37,7 +36,6 @@ use function str_repeat;
 #[UsesClass(PDOTotpCredentialStorage::class)]
 #[UsesClass(RecoveryCodeRecord::class)]
 #[UsesClass(RecoveryCodeService::class)]
-#[UsesClass(SodiumSecretEncryptionService::class)]
 #[UsesClass(SvgQrCodeService::class)]
 #[UsesClass(TotpCredential::class)]
 #[UsesClass(TotpCredentialService::class)]

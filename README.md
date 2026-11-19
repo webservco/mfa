@@ -4,8 +4,8 @@ A PHP component/library. Please see [webservco/sandbox](https://webservco.github
 
 TOTP multi-factor authentication (Google Authenticator compatible): enrollment with a QR code, verification with replay protection and throttling, recovery codes and encrypted secrets.
 
-- Requires: PHP extensions `sodium` and `xmlwriter`; the tables in [`resources/mfa.sql`](resources/mfa.sql); the `MFA_ENCRYPTION_KEY` and `MFA_ISSUER` configuration keys
-- Related: `webservco/auth` (an application asks for the code while its login is pending); `webservco/database` (the PDO container)
+- Requires: PHP extension `xmlwriter`, and `sodium` through `webservco/encryption`; the tables in [`resources/mfa.sql`](resources/mfa.sql); the `MFA_ENCRYPTION_KEY` and `MFA_ISSUER` configuration keys
+- Related: `webservco/auth` (an application asks for the code while its login is pending); `webservco/database` (the PDO container); `webservco/encryption` (encrypts the secrets)
 
 ---
 
@@ -118,8 +118,8 @@ ddev start
 ddev c u
 # Run all validations.
 ddev c c
-# Run unit tests.
-ddev c test:dox
+# Run unit tests, with coverage (needs Xdebug, which DDEV leaves off).
+ddev xdebug on && ddev c test:dox; ddev xdebug off
 ```
 
 ---
